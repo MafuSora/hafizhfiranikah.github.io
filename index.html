@@ -52,16 +52,25 @@
   </head>
 
   <body>
-
-    <div id="particles-js"></div>
-    <!-- Floating Hearts -->
-    <div class="floating-hearts">
-        <i class="fas fa-heart heart"></i>
-        <i class="fas fa-heart heart"></i>
-        <i class="fas fa-heart heart"></i>
-        <i class="fas fa-heart heart"></i>
-        <i class="fas fa-heart heart"></i>
+    <!-- COVER UNDANGAN -->
+    <div id="coverUndangan" class="cover-wrapper">
+      <div class="cover-content">
+        <h1 class="cover-title">Walimatul 'Ursy</h1>
+        <h2 class="cover-nama">Santi & Luthfi</h2>
+        <p class="cover-date">Jum'at, 7 Juni 2024</p>
+        <button id="btnOpen" class="btn-open">Buka Undangan</button>
+      </div>
     </div>
+
+    <!-- <div id="particles-js"></div> -->
+    <!-- Floating Hearts -->
+    <!-- <div class="floating-hearts">
+        <i class="fas fa-heart heart"></i>
+        <i class="fas fa-heart heart"></i>
+        <i class="fas fa-heart heart"></i>
+        <i class="fas fa-heart heart"></i>
+        <i class="fas fa-heart heart"></i>
+    </div> -->
     <!-- Begin Preloader -->
     <div class="preloader-wrapper">
       <div class="preloader">
@@ -362,6 +371,92 @@ id="song"
     <!-- End Footer -->
 
     <!-- Scripts -->
+<script>
+// ========== 1. SLUG HANDLING ==========
+const path = window.location.pathname.split("/").filter(Boolean);
+const tipe = Number(path[0]);
+const nama = decodeURIComponent(path[1] || "Tamu Undangan");
+document.getElementById("namaTamu").textContent = nama;
+let jam = "";
+if (tipe === 1) jam = "10:00 - 12:00";
+else if (tipe === 2) jam = "12:00 - 15:00";
+else if (tipe === 3) jam = "10:00 - 15:00";
+else jam = "10:00 - Selesai";
+document.getElementById("waktuTamu").textContent = jam;
+// ========== 2. MUSIC CONTROL ==========
+const bgm = document.getElementById("bgm");
+const btn = document.getElementById("musicBtn");
+let playing = false;
+// Autoplay setelah user input
+const autoPlay = () => {
+  bgm.play();
+  playing = true;
+  document.removeEventListener("click", autoPlay);
+};
+document.addEventListener("click", autoPlay);
+btn.onclick = () => {
+  if (playing) bgm.pause();
+  else bgm.play();
+  playing = !playing;
+};
+// ========== 3. LIGHTBOX ==========
+const lightbox = GLightbox({
+  selector: "#lightgallery a",
+  touchNavigation: true,
+  loop: true
+});
+// ========== 4. ANIMASI BUNGA KECIL PASTEL ==========
+class Flower {
+  constructor() {
+    this.el = document.createElement("div");
+    this.el.innerHTML = "❀";
+    this.el.style.position = "fixed";
+    this.el.style.color = ["#e8c3b9","#f2dede","#f9e6e0"][Math.floor(Math.random()*3)];
+    this.el.style.fontSize = (12 + Math.random()*10) + "px";
+    this.el.style.top = "-20px";
+    this.el.style.left = Math.random() * 100 + "vw";
+    this.el.style.opacity = 0.8;
+    this.el.style.pointerEvents = "none";
+    document.body.appendChild(this.el);
+    this.fall();
+  }
+  fall() {
+    const duration = 5000 + Math.random() * 4000;
+    this.el.animate([
+      { transform: "translateY(0px) rotate(0deg)" },
+      { transform: "translateY(100vh) rotate(360deg)" }
+    ], {
+      duration: duration,
+      iterations: 1,
+      easing: "linear"
+    }).onfinish = () => this.el.remove();
+  }
+}
+setInterval(() => new Flower(), 600);
+// ========== 5. FADE-IN SCROLL ==========
+const fadeSections = document.querySelectorAll(".fade-section");
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add("visible"); });
+});
+fadeSections.forEach(s => observer.observe(s));
+</script>
+    <script>
+const cover = document.getElementById("coverUndangan");
+const btnOpen = document.getElementById("btnOpen");
+// Mulai musik ketika buka undangan
+btnOpen.addEventListener("click", () => {
+  cover.classList.add("cover-hidden");
+  // Mulai musik background bila belum play
+  const bgm = document.getElementById("bgm");
+  bgm.play();
+  // Trigger animasi fade-in untuk semua fade-section
+  setTimeout(() => {
+    document.querySelectorAll(".fade-section").forEach(sec => {
+      sec.classList.add("visible");
+    });
+  }, 500);
+});
+</script>
 <script>
   document.addEventListener('scroll', musicPlay);
 function musicPlay() {
